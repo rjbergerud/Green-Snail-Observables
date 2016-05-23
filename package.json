@@ -5,7 +5,10 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "socket.io": "0.9.13",
-    "ntwitter": "0.5.0"
+    "ntwitter": "0.5.0",
+    "socket.io": "0.9.13"
+  },
+  "devDependencies": {
+    "dotenv": "^2.0.0"
   }
 }
