@@ -1,6 +1,9 @@
 {
   "name": "first-demo",
   "description": "Practice project for socket.io and reactive functional programming",
+  "scripts": {
+    "start": "node app.js"
+  },
   "dependencies": {
     "socket.io": "0.9.13",
     "ntwitter": "0.5.0"
