@@ -3,9 +3,20 @@ var fs = require("fs"),
     io = require("socket.io").listen(app, {log: false}),
     theport = process.env.PORT || 2000;
     twitter = require("ntwitter"),
-    keys = require('./keys.json');
+    keys = fs.statSync('./keys.json') ? require('./keys.json') : envKeys();
 
 app.listen(theport);
+
+console.log(fs.statSync('./keys.json').isFile());
+
+function envKeys() {
+  return {
+    consumer_key: process.env.consumer_key,
+    consumer_secret: process.env.consumer_secret,
+    access_token_key: process.env.access_token_key,
+    access_token_secret: process.env.access_token_secret
+  }
+}
 
 function handler(req, res) {
   fs.readFile(__dirname + "/index.html",
