@@ -6,7 +6,7 @@ var fs = require("fs"),
 app.listen(theport);
 
 function handler(req, res) {
-  fs.readFile(_dirname + "/index.html",
+  fs.readFile(__dirname + "/index.html",
     function (err, data) {
       if(err) {
         res.writeHead(500);
