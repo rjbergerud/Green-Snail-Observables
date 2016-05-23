@@ -1,13 +1,18 @@
 var fs = require("fs"),
     app = require("http").createServer(handler),
     io = require("socket.io").listen(app, {log: false}),
-    theport = process.env.PORT || 2000;
-    twitter = require("ntwitter"),
-    keys = fs.statSync('./keys.json') ? require('./keys.json') : envKeys();
+    theport = process.env.PORT || 2000,
+
+    twitter = require("ntwitter");
+
+var dotenv = null;
+if(process.env.NODE_ENV === "production") {
+  dotenv = require('dotenv');
+  dotenv.load();
+}
+var keys = envKeys();
 
 app.listen(theport);
-
-console.log(fs.statSync('./keys.json').isFile());
 
 function envKeys() {
   return {
