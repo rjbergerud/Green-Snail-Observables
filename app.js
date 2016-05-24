@@ -65,6 +65,7 @@ var tw = new twitter({
 
 // A listener for a client connection
 io.sockets.on("connection", function(socket) {
+  console.log(socket);
   //The user should be added to the array if it doesn't exist
   if(user.indexOf(socket.id) === -1) {
     users.push(socket.id);
