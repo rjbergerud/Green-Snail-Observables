@@ -36,6 +36,7 @@ function handler(req, res) {
 }
 
 io.sockets.on("connection", function(socket) {
+  console.log('Client connected');
   //This will run when the client is connected
 
   //Thisis a listener to the signal "something"
