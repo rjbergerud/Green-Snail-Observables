@@ -24,7 +24,6 @@ function envKeys() {
 }
 
 function handler(req, res) {
-  console.log('console.log working in heroku logs');
   fs.readFile(__dirname + "/index.html",
     function (err, data) {
       if(err) {
