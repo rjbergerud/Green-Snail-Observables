@@ -20,6 +20,7 @@
             // This will listen when the server emits the "connected" signal
             // informing to the client that the connection has been stablished
             _socket.on("connected", function(r) {
+                console.log(r);
                 $("head").find("title").html("Tracking now: " + r.tracking);
                 $(".tracking").html(r.tracking);
 

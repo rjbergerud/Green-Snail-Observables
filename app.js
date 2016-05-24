@@ -74,6 +74,7 @@ io.sockets.on("connection", function(socket) {
   logConnectedUsers();
 
   socket.on("start stream", function() {
+    console.log(stream, 77);
     if(stream === null) {
       tw.stream("statuses/filter", {
         track: track
