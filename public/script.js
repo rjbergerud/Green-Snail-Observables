@@ -1,10 +1,9 @@
 var _socket = null;
 $(function() {
-  var prodServer = "http://dry-reaches-66607.herokuapp.com:80/";
-  var localServer = "http://localhost:2000"
+  var site = document.URL;
     if(io !== undefined) {
         // Here you create the connection with the server
-        _socket = io.connect(localServer);
+        _socket = io.connect(site);
 
         // This will listen to the "new tweet" signal everytime
         // there's a new tweet incoming into the stream
