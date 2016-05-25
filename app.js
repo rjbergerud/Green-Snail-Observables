@@ -1,18 +1,27 @@
 var fs = require("fs"),
-    app = require("http").createServer(handler),
-    io = require("socket.io").listen(app, {log: false}),
-    theport = process.env.PORT || 2000,
+    express= require('express'),
+    app = express(),
+    http = require("http").Server(app);
+    var io = require('socket.io')(http),
+    thePort = process.env.PORT || 2000,
 
-    twitter = require("ntwitter");
+    twitter = require("twitter");
 
-var dotenv = null;
-if(process.env.NODE_ENV != "production") {
-  dotenv = require('dotenv');
-  dotenv.load();
-}
+var dotenv = require('dotenv');
+dotenv.load();
 var keys = envKeys();
+console.log(keys);
 
-app.listen(theport);
+
+app.get('/', function(req, res) {
+  res.sendfile('./index.html');
+});
+
+app.use(express.static('public'));
+
+http.listen(thePort, function() {
+  console.log('Listening on ' + thePort)
+});
 
 function envKeys() {
   return {
@@ -22,30 +31,6 @@ function envKeys() {
     access_token_secret: process.env.access_token_secret
   }
 }
-
-function handler(req, res) {
-  fs.readFile(__dirname + "/index.html",
-    function (err, data) {
-      if(err) {
-        res.writeHead(500);
-        return res.end("Error loading index.html");
-      }
-      res.writeHead(200);
-      res.end(data);
-    });
-}
-
-io.sockets.on("connection", function(socket) {
-  console.log('Client connected');
-  //This will run when the client is connected
-
-  //Thisis a listener to the signal "something"
-  socket.on("something", function(data) {
-
-  })
-
-  socket.emit("something else", {hello: "Hello, are you connected?"})
-})
 
 /**
 * @var tw the Twitter Streaming API initalization
@@ -61,42 +46,57 @@ var tw = new twitter({
     access_token_secret: keys.access_token_secret
   }),
   stream = null,
-  track = "venezuala",
+  track = "javascript",
   users = [];
+
+
+
 
 // A listener for a client connection
 io.sockets.on("connection", function(socket) {
-  console.log(socket);
   //The user should be added to the array if it doesn't exist
   if(users.indexOf(socket.id) === -1) {
     users.push(socket.id);
   }
 
+  socket.on("disconnect", function (socket) {
+    users.splice(users.indexOf(socket.id), 1);
+    logConnectedUsers();
+  })
   //log
   logConnectedUsers();
 
+  socket.emit("connected", {"Hiiiii": "hiiiii", tracking: track})
+
+
   socket.on("start stream", function() {
-    console.log(stream, 77);
+    console.log('stream started');
     if(stream === null) {
-      tw.stream("statuses/filter", {
-        track: track
-      }, function(s) {
-        stream = s;
-        stream.on("data", function(data) {
-          // Only broadcast when users are online
-          if(users.length > 0) {
-            socket.broadcast.emit("new tweet", data);
-            socket.emit("new tweet", data);
-          } else {
-            // If there are no users connected we destroy the stream
-            stream.destroy();
-            stream = null;
-          }
-        })
-      })
+        tw.stream("statuses/filter", {
+          track: track
+        }, function(s) {
+          stream = s;
+          stream.on("data", function(tweet) {
+            console.log('Stream recieved some tweet');
+            // Only broadcast when users are online
+            if(users.length > 0) {
+              socket.broadcast.emit("new tweet", tweet);
+              socket.emit("new tweet", tweet);
+            } else {
+              // If there are no users connected we destroy the stream
+              stream.destroy();
+              stream = null;
+            }
+          })
+
+          stream.on('error', function(error) {
+            console.log(error);
+          })
+        });
     }
   })
-})
+});
+
 
 function logConnectedUsers() {
   console.log("=============== CONNECTED USERS ===================");

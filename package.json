@@ -5,8 +5,10 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "ntwitter": "0.5.0",
-    "socket.io": "0.9.13"
+    "express": "^4.13.4",
+    "semantic-ui": "^2.1.8",
+    "socket.io": "^1.0.0",
+    "twitter": "^1.3.0"
   },
   "devDependencies": {
     "dotenv": "^2.0.0"

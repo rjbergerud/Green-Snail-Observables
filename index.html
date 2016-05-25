@@ -1,45 +1,19 @@
 <html>
 <head>
   <title>Dry Reaches</title>
+  <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
 
-<script src="/socket.io/socket.io.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
   <script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
-  <script type="text/javascript">
-    var _socket = null;
-    $(function() {
-        if(io !== undefined) {
-            // Here you create the connection with the server
-            _socket = io.connect("http://dry-reaches-66607.herokuapp.com:80/");
+  <script src="/semantic/dist/semantic.min.js"></script>
 
-            // This will listen to the "new tweet" signal everytime
-            // there's a new tweet incoming into the stream
-            _socket.on("new tweet", function(tweet) {
-                // handle tweet object
-            });
-
-            // This will listen when the server emits the "connected" signal
-            // informing to the client that the connection has been stablished
-            _socket.on("connected", function(r) {
-                console.log(r);
-                $("head").find("title").html("Tracking now: " + r.tracking);
-                $(".tracking").html(r.tracking);
-
-                // Here the client tells the server to "start stream"
-                emitMsj("start stream");
-            });
-        }
-    });
-    function emitMsj(signal, o) {
-        if(_socket) {
-            _socket.emit(signal, o);
-        }
-        else {
-            alert("Shit! Socket.io didn't start!");
-        }
-    }
-</script>
+  <script type="text/javascript" src="/script.js"></script>
 </head>
 <body>
-  <header>Dry Reaches</header>
+  <header div="ui header">Dry Reaches</header>
+  <div class="ui container">
+    <div id="tweets">
+    </div>
+  </div>
 </body>
 </html>
