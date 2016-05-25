@@ -7,8 +7,11 @@ var fs = require("fs"),
 
     twitter = require("twitter");
 
-var dotenv = require('dotenv');
-dotenv.load();
+if(process.env.NODE_ENV === "production") {
+  var dotenv = require('dotenv');
+  dotenv.load();
+}
+
 var keys = envKeys();
 console.log(keys);
 
