@@ -7,7 +7,7 @@ var fs = require("fs"),
 
     twitter = require("twitter");
 
-if(process.env.NODE_ENV === "production") {
+if(process.env.NODE_ENV != "production") {
   var dotenv = require('dotenv');
   dotenv.load();
 }
