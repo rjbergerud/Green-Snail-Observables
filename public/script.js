@@ -4,17 +4,9 @@ $(function() {
     if(io !== undefined) {
         // Here you create the connection with the server
         _socket = io.connect(site);
-
-        // This will listen to the "new tweet" signal everytime
-        // there's a new tweet incoming into the stream
-        _socket.on("new tweet", function(tweet) {
-            // handle tweet object
-        });
-
         // This will listen when the server emits the "connected" signal
         // informing to the client that the connection has been stablished
         _socket.on("connected", function(r) {
-            console.log(r);
             $("head").find("title").html("Tracking now: " + r.tracking);
             $(".tracking").html(r.tracking);
 
@@ -22,8 +14,19 @@ $(function() {
             emitMsj("start stream");
         });
 
-        _socket.on("new tweet", function(t) {
-          console.log(t);
+        var tweetObs = Rx.Observable.create(function (observer) {
+          _socket.on("new tweet", function(t) {
+            console.log(t);
+            observer.onNext(t);
+          });
+          _socket.on("error", function(e) {
+            console.log(e);
+            observer.onError(e);
+          })
+
+        });
+        tweetObs.subscribe(
+          function(t) {
           var pic = $('<img>').attr({src: t.user.profile_image_url})
                               .addClass('ui avatar');
           var tweetDiv = $('<div>').html(t.text)
@@ -31,7 +34,11 @@ $(function() {
                                     .append(pic)
 
           $('#tweets').append(tweetDiv);
-        });
+        },
+        function(err) {
+          console.log('Error: ' + err)
+        }
+      );
     }
 });
 function emitMsj(signal, o) {

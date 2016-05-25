@@ -4,7 +4,7 @@ var fs = require("fs"),
     http = require("http").Server(app);
     var io = require('socket.io')(http),
     thePort = process.env.PORT || 2000,
-
+    Rx = require("rxjs"),
     twitter = require("twitter");
 
 if(process.env.NODE_ENV != "production") {
@@ -49,7 +49,7 @@ var tw = new twitter({
     access_token_secret: keys.access_token_secret
   }),
   stream = null,
-  track = "javascript",
+  track = "bubble",
   users = [];
 
 
@@ -61,16 +61,12 @@ io.sockets.on("connection", function(socket) {
   if(users.indexOf(socket.id) === -1) {
     users.push(socket.id);
   }
+  logConnectedUsers();
 
   socket.on("disconnect", function (socket) {
     users.splice(users.indexOf(socket.id), 1);
     logConnectedUsers();
   })
-  //log
-  logConnectedUsers();
-
-  socket.emit("connected", {"Hiiiii": "hiiiii", tracking: track})
-
 
   socket.on("start stream", function() {
     console.log('stream started');
