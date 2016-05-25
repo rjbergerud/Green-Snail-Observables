@@ -4,6 +4,8 @@ $(function() {
     var tweetObs = startStream();
     tweetObs.subscribe(displayTweet, logError);
 
+    // var print = function() {return $('.container')}
+
     //Defer
     var interval = Rx.Observable.interval(1000);
     // interval.subscribe(x => console.log(x));
@@ -11,7 +13,9 @@ $(function() {
     //Empty/Never/Throw
 
     //From
-
+    var arr = [1,3,5,7,9,11];
+    fromSource = Rx.Observable.from(arr);
+    // fromSource.subscribe()
   }
 });
 
@@ -62,6 +66,7 @@ function startStream() {
 }
 
 function displayTweet(t) {
+    console.log(t);
     var pic = $('<img>').attr({src: t.user.profile_image_url})
                         .addClass('ui avatar');
     var tweetDiv = $('<div>').html(t.text)

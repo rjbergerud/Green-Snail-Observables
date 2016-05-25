@@ -16,7 +16,7 @@ module.export = function(io) {
       access_token_secret: keys.access_token_secret
     }),
     stream = null,
-    track = "bubble",
+    track = "javascript",
     users = [];
 
   // A listener for a client connection
