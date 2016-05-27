@@ -4,38 +4,49 @@ $(function() {
     var tweetObs = startStream();
     tweetObs.subscribe(displayTweet, logError);
 
-    // var print = function() {return $('.container')}
-
-    //Defer
-    var interval = Rx.Observable.interval(1000);
-    // interval.subscribe(x => console.log(x));
-
     //Empty/Never/Throw
 
     //From
-    var arr = [1,3,5,7,9,11];
-    fromSource = Rx.Observable.from(arr);
-    // fromSource.subscribe()
+    { let arr = [1,3,5,7,9,11];
+      let source = Rx.Observable.from(arr);
+      let printSource = source.flatMap(num => [num]);
+      print('from', printSource)}
+
+    // //From Callback
+    // var callbackPrint = print('fromCallback');
+    // var getJSON = Rx.Observable.fromCallback($.getJSON, undefined, function(x,y) {return x.results[0].name.first;})
+    // var callbackSource = getJSON('https://randomuser.me/api/')
+    // callbackSource.subscribe((user) => callbackPrint.addNext(user))
+    //
+    // //Defer
+    // var deferPrint = print('Defer');
+    // var source = Rx.Observable.defer(callbackSource);
+
   }
 });
+
+
+//@param operatorName is the operator name
+//@param source is a stream of jquery-wrapped elements to append
+function print(operatorName, source) {
+   var display = new StreamElement($('#operators'), operatorName);
+   source.subscribe((x) => display.addNext(x));
+}
 
 // @param Parent is jquery element
 function StreamElement(parent, operatorName) {
   var segment = $('<div>').addClass('ui segment ' + operatorName)
   var header  = $('<div>').addClass('ui header').html(operatorName)
-  var grid    = $('<div>').addClass('ui raised segments columns very relaxed grid').attr('id', operatorName)
+  var grid    = $('<div>').addClass('ui raised segments columns relaxed grid olive').attr('id', operatorName)
 
   segment.append(header).append(grid);
   parent.append(segment);
   this.grid = $('#' + operatorName);
 
-  this.addNext = function (text) {
-    var pointer = $('<div>').addClass('ui vertical divider')
+  this.addNext = function (jElement) {
     var column = $('<div>').addClass('ui segment column')
-                            .html(text)
+                            .append(jElement)
                             .append($('<i>').addClass('long arrow right icon'))
-    console.log(column);
-    console.log(this.grid.html());
     this.grid.append(column);
   }
 }
@@ -45,7 +56,9 @@ function startStream() {
     _socket = io.connect(document.URL);
     // This will listen when the server emits the "connected" signal
     // informing to the client that the connection has been stablished
+    console.log('stream should start')
     _socket.on("connected", function(r) {
+      console.log('connected!!!')
         $("head").find("title").html("Tracking now: " + r.tracking);
         $(".tracking").html(r.tracking);
 
@@ -66,7 +79,6 @@ function startStream() {
 }
 
 function displayTweet(t) {
-    console.log(t);
     var pic = $('<img>').attr({src: t.user.profile_image_url})
                         .addClass('ui avatar');
     var tweetDiv = $('<div>').html(t.text)

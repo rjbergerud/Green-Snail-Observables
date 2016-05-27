@@ -1,3 +1,10 @@
 /*******************************
          Site Overrides
 *******************************/
+.ui.raised.segments {
+  background: white;
+}
+
+.ui.segment.column {
+  background: white;
+}

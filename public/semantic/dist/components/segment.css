@@ -16,7 +16,7 @@
 
 .ui.segment {
   position: relative;
-  background: #FFFFFF;
+  background: orange;
   box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
   margin: 1rem 0em;
   padding: 1em 1em;
@@ -87,7 +87,7 @@
 
 /* Table */
 .ui.basic.table.segment {
-  background: #FFFFFF;
+  background: orange;
   border: 1px solid rgba(34, 36, 38, 0.15);
   box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
 }
@@ -338,7 +338,7 @@
   background-color: transparent;
   border-radius: 0px;
   padding: 0em;
-  background-color: #FFFFFF;
+  background-color: orange;
   box-shadow: 0px 1px 2px 0 rgba(34, 36, 38, 0.15);
   margin: 1rem 0em;
   border-radius: 0.28571429rem;
@@ -748,3 +748,9 @@
          Site Overrides
 *******************************/
 
+.ui.raised.segments {
+  background: white;
+}
+.ui.segment.column {
+  background: white;
+}

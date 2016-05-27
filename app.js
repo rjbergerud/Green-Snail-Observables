@@ -12,8 +12,6 @@ if(process.env.NODE_ENV != "production") {
   dotenv.load();
 }
 
-var keys = envKeys();
-
 app.get('/', function(req, res) {
   res.sendfile('./index.html');
 });
@@ -24,11 +22,4 @@ http.listen(thePort, function() {
   console.log('Listening on ' + thePort)
 });
 
-function envKeys() {
-  return {
-    consumer_key: process.env.consumer_key,
-    consumer_secret: process.env.consumer_secret,
-    access_token_key: process.env.access_token_key,
-    access_token_secret: process.env.access_token_secret
-  }
-}
+runSockets(io);
