@@ -4,23 +4,87 @@ $(function() {
     var tweetObs = startStream();
     tweetObs.subscribe(displayTweet, logError);
 
+
+    /****************************/
+    /* Creating Observables */
+    /****************************/
     //Empty/Never/Throw
 
     //From
-    { let arr = [1,3,5,7,9,11];
+    {
+      let arr = [1,3,5,7,9,11];
       let source = Rx.Observable.from(arr);
       let printSource = source.flatMap(num => [num]);
-      print('from', printSource)}
+      print('from', 'creating', printSource)
+    }
+
+    //Just
+    {
+      let arr = [1,3,5,7,9,11];
+      let source = Rx.Observable.just(arr);
+      let printSource = source.flatMap(num => [num.toString()]);
+      print('just', 'creating', printSource)
+    }
 
     // //From Callback
-    // var callbackPrint = print('fromCallback');
-    // var getJSON = Rx.Observable.fromCallback($.getJSON, undefined, function(x,y) {return x.results[0].name.first;})
-    // var callbackSource = getJSON('https://randomuser.me/api/')
-    // callbackSource.subscribe((user) => callbackPrint.addNext(user))
-    //
-    // //Defer
-    // var deferPrint = print('Defer');
-    // var source = Rx.Observable.defer(callbackSource);
+    {
+      let getJSON = Rx.Observable.fromCallback($.getJSON, undefined, function(x,y) {
+        return x;
+      });
+      let source = getJSON('https://randomuser.me/api/');
+      let printSource = source.flatMap(x => [x.results[0].name.first]);
+      print('fromCallback', 'creating', printSource);
+    }
+
+    //Defer
+    {
+      let getJSON = Rx.Observable.fromCallback($.getJSON, undefined, function(x,y) {
+        return x;
+      });
+      let deferredSource = Rx.Observable.defer(function() {return getJSON('https://randomuser.me/api/')});
+      let printSource = deferredSource.flatMap(x => [x.results[0].name.first]);
+      print('deferredSource-1', 'creating', printSource);
+      print('defferedSource-2', 'creating', printSource);
+    }
+
+    //Interval
+    {
+      let source = Rx.Observable.interval(1000).take(27);
+      print('Interval','creating', source);
+    }
+
+    //Interval
+    {
+      let n = 10, m = 5;
+      let source = Rx.Observable.range(n,m);
+      source.subscribe(x=> console.log(x))
+      print(`range-${n}-${m + n}`, 'creating', source);
+    }
+
+    //Repeat
+    {
+      let source = Rx.Observable.repeat(7)
+                                .take(7);
+      print('Repeat', 'creating', source);
+    }
+
+    //Start
+    {
+      let source = null;
+      //print('Start', 'creating');
+    }
+
+    //Timer
+    {
+      let source = null;
+      //print('Timer', 'creating');
+    }
+
+    /****************************/
+    /* Transforming Observables */
+    /****************************/
+
+    //Buffer
 
   }
 });
@@ -28,9 +92,13 @@ $(function() {
 
 //@param operatorName is the operator name
 //@param source is a stream of jquery-wrapped elements to append
-function print(operatorName, source) {
-   var display = new StreamElement($('#operators'), operatorName);
-   source.subscribe((x) => display.addNext(x));
+function print(operatorName, operatorType, source) {
+   var display = new StreamElement($(`#${operatorType}`), operatorName, operatorType);
+   source.subscribe(
+     (x) => display.addNext(x),
+     (e) => display.addNext(e),
+     () => display.addLast('Completed')
+   );
 }
 
 // @param Parent is jquery element
@@ -43,11 +111,19 @@ function StreamElement(parent, operatorName) {
   parent.append(segment);
   this.grid = $('#' + operatorName);
 
-  this.addNext = function (jElement) {
-    var column = $('<div>').addClass('ui segment column')
-                            .append(jElement)
-                            .append($('<i>').addClass('long arrow right icon'))
-    this.grid.append(column);
+  this.addNext = function (element) {
+    var next = $('<div>').addClass('ui segment column')
+                            .append(element)
+    var pointer = $('<div>').addClass("ui column segment")
+                                .append($('<i>').addClass('long arrow right icon'))
+    this.grid.append(next);
+    this.grid.append(pointer);
+  }
+
+  this.addLast = function() {
+    var doneDiv = $('<div>').addClass('ui segment column')
+                            .append('Completed')
+    this.grid.append(doneDiv);
   }
 }
 

@@ -19415,6 +19415,19 @@ ol.ui.horizontal.list li:before,
 /*******************************
          Site Overrides
 *******************************/
+
+.ui.grid > .relaxed.row > .column,
+.ui.relaxed.grid > .column:not(.row),
+.ui.relaxed.grid > .row > .column {
+  padding-left: .5rem;
+  padding-right: .5rem;
+}
+
+.ui.grid > .column:not(.row),
+.ui.grid > .row > .column {
+  min-width: 6.25%;
+  width: auto;
+}
 /*
  * # Semantic - Menu
  * http://github.com/semantic-org/semantic-ui/
