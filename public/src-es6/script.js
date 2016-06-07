@@ -1,3 +1,10 @@
+// import creating from './RxOperators/creating.js';
+var consoleObserver = Rx.Observer.create(
+  function (x) { console.log('Do Next: %s', x); },
+  function (err) { console.log('Do Error: %s', err); },
+  function () { console.log('Do Completed'); }
+);
+
 var _socket = null;
 $(function() {
   if(io !== undefined) {
@@ -51,6 +58,7 @@ $(function() {
     {
       let source = Rx.Observable.interval(1000).take(27);
       print('Interval','creating', source);
+      setTimeout(function() {print('Interval-delayed','creating', source, 'Interval-delayed, demonstrates Interval is Cold Observable');}, 3000)
     }
 
     //Interval
@@ -85,15 +93,33 @@ $(function() {
     /****************************/
 
     //Buffer
+    {
+      let source = Rx.Observable.interval(1000)
+                                .take(10);
+      let buffered = source.buffer(function() { return Rx.Observable.interval(3000) })
+      print('Buffered', 'transforming', buffered)
+    }
 
+    /****************************/
+    /* Utility Operators         */
+    /****************************/
+
+    {
+      let source = Rx.Observable.interval(1000)
+                                .take(10)
+                                .do(consoleObserver);
+      source.do((n) => {console.log("This won't show " + n)}) //This does nothing
+      let buffered = source.buffer(function() { return Rx.Observable.interval(3000) })
+      print('do', 'utility', buffered, 'Buffered, check console.logs for results from do.  Note that .do has to be chained to the original creation of the observable.');
+    }
   }
 });
 
 
 //@param operatorName is the operator name
 //@param source is a stream of jquery-wrapped elements to append
-function print(operatorName, operatorType, source) {
-   var display = new StreamElement($(`#${operatorType}`), operatorName, operatorType);
+function print(operatorName, operatorType, source, comments) {
+   var display = new StreamElement($(`#${operatorType}`), operatorName, comments);
    source.subscribe(
      (x) => display.addNext(x),
      (e) => display.addNext(e),
@@ -102,12 +128,13 @@ function print(operatorName, operatorType, source) {
 }
 
 // @param Parent is jquery element
-function StreamElement(parent, operatorName) {
+function StreamElement(parent, operatorName, comments) {
   var segment = $('<div>').addClass('ui segment ' + operatorName)
   var header  = $('<div>').addClass('ui header').html(operatorName)
   var grid    = $('<div>').addClass('ui raised segments columns relaxed grid olive').attr('id', operatorName)
+  var comments = $('<div>').addClass('ui segment').html(comments)
 
-  segment.append(header).append(grid);
+  segment.append(header).append(grid).append(comments);
   parent.append(segment);
   this.grid = $('#' + operatorName);
 
